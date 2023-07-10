@@ -36,6 +36,44 @@ const updateUser = async (req = request, res = response) => {
     return res.status(200).json(newUser);
 }
 
+const answerQuestion = async (req = request, res = response) => {
+    const { userId } = req.params;
+    const { body } = req;
+
+    if (!userId) {
+        return res.status(400).json({
+            msg: 'UserId is required'
+        });
+    }
+
+    if (!body.questionId) {
+        return res.status(400).json({
+            msg: 'QuestionId is required'
+        });
+    }
+
+    if (!body.answer) {
+        return res.status(400).json({
+            msg: 'Answer is required'
+        });
+    }
+
+    const user = await User.findById(userId);
+    if (user.answers) {
+        user.answers = [body];
+    } else {
+        const alreadyAnswered = user.answers.findIndex(a => a.questionId == body.questionId);
+        if (alreadyAnswered >= 0) {
+            user.answers[alreadyAnswered] = body;
+        } else {
+            user.answers = [...user.answers, body];
+        }
+    }
+
+    await User.updateOne({ id: userId }, user);
+    return res.status(200).json(user);
+}
+
 const match = async (req = request, res = response) => {
     const { body } = req;
     try {
@@ -94,5 +132,6 @@ module.exports = {
     createUser,
     getUserById,
     updateUser,
-    match
+    match,
+    answerQuestion
 }

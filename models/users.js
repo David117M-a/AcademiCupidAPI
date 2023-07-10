@@ -1,5 +1,10 @@
 const mongoose = require('mongoose');
 
+const Answer = {
+    answer: String,
+    questionId: Object
+}
+
 const UserSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -33,6 +38,17 @@ const UserSchema = new mongoose.Schema({
     },
     photos: {
         type: [String]
+    },
+    career: {
+        type: String,
+        required: true
+    },
+    description: {
+        type: String
+    },
+    answers: {
+        type: [Answer],
+        required: true
     }
 });
 
